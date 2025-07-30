@@ -4,8 +4,9 @@ import { getUserFromRequest } from "@/lib/auth"
 import type { Blog, BlogWithAuthor } from "@/lib/models/Blog"
 import { ObjectId } from "mongodb"
 
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(request: NextRequest, context: { params: { id: string } }) {
   try {
+    const params = await context.params;
     const client = await clientPromise
     const db = client.db("blog-app")
     const blogs = db.collection<Blog>("blogs")
@@ -14,8 +15,11 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
       return NextResponse.json({ error: "Invalid blog ID" }, { status: 400 })
     }
 
-    // Increment view count
-    await blogs.updateOne({ _id: new ObjectId(params.id) }, { $inc: { views: 1 } })
+    // Increment view count unless ?noview=1 is present
+    const { searchParams } = new URL(request.url)
+    if (searchParams.get("noview") !== "1") {
+      await blogs.updateOne({ _id: new ObjectId(params.id) }, { $inc: { views: 1 } })
+    }
 
     // Get blog with author information
     const blog = await blogs
@@ -53,8 +57,9 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
   }
 }
 
-export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(request: NextRequest, context: { params: { id: string } }) {
   try {
+    const params = await context.params;
     const user = getUserFromRequest(request)
     if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
@@ -105,8 +110,9 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
   }
 }
 
-export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(request: NextRequest, context: { params: { id: string } }) {
   try {
+    const params = await context.params;
     const user = getUserFromRequest(request)
     if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })

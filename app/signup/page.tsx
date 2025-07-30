@@ -51,7 +51,7 @@ export default function SignupPage() {
       const success = await signup(username, email, password)
       if (success) {
         toast({
-          title: "Welcome to BlogApp!",
+          title: "Welcome to QuillTide!",
           description: "Your account has been created successfully.",
         })
         router.push("/")

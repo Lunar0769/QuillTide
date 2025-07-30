@@ -23,7 +23,7 @@ export default function Navbar() {
           <div className="flex justify-between h-16">
             <div className="flex items-center">
               <Link href="/" className="text-xl font-bold text-gray-900">
-                BlogApp
+                QuillTide
               </Link>
             </div>
           </div>

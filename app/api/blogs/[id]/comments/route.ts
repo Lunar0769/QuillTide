@@ -4,8 +4,10 @@ import { getUserFromRequest } from "@/lib/auth"
 import type { Blog, Comment } from "@/lib/models/Blog"
 import { ObjectId } from "mongodb"
 
-export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
+
+export async function POST(request: NextRequest, context: { params: { id: string } }) {
   try {
+    const params = await context.params;
     const user = getUserFromRequest(request)
     if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })

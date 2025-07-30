@@ -4,8 +4,9 @@ import type { User, UserStats } from "@/lib/models/User"
 import type { Blog } from "@/lib/models/Blog"
 import { ObjectId } from "mongodb"
 
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(request: NextRequest, context: { params: { id: string } }) {
   try {
+    const params = await context.params;
     if (!ObjectId.isValid(params.id)) {
       return NextResponse.json({ error: "Invalid user ID" }, { status: 400 })
     }

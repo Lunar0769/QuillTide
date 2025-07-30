@@ -11,7 +11,7 @@ const inter = Inter({ subsets: ["latin"] })
 export const metadata: Metadata = {
   title: "QuillTide - Share Your Stories",
   description: "A full-stack blog application built with Next.js and MongoDB",
-    generator: 'Kavya Patel'
+    generator: 'v0.dev'
 }
 
 export default function RootLayout({

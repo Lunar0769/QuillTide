@@ -16,7 +16,7 @@ import { useToast } from "@/hooks/use-toast"
 import { Heart, MessageCircle, Eye, Edit, Trash2, Loader2 } from "lucide-react"
 import { formatDistanceToNow } from "date-fns"
 
-interface CommentWithAuthor extends Comment {
+interface CommentWithAuthor extends Omit<Comment, "author"> {
   author: {
     _id: string
     username: string
@@ -39,20 +39,32 @@ export default function BlogDetailPage() {
 
   const blogId = params.id as string
 
-  useEffect(() => {
-    fetchBlog()
-  }, [blogId])
+useEffect(() => {
+  // Only increment view if not already viewed in this session (client-side only)
+  if (typeof window === "undefined") return;
+  const viewedKey = `viewed_blog_${blogId}`;
+  if (!sessionStorage.getItem(viewedKey)) {
+    fetchBlog();
+    sessionStorage.setItem(viewedKey, "true");
+  } else {
+    // Fetch blog data without incrementing view
+    fetchBlog(false);
+  }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+}, [blogId, user]);
 
-  const fetchBlog = async () => {
+  // If incrementView is true, call API as normal (increments view). If false, call with ?noview=1 (no increment)
+  const fetchBlog = async (incrementView = true) => {
     try {
-      const response = await fetch(`/api/blogs/${blogId}`)
+      const url = incrementView ? `/api/blogs/${blogId}` : `/api/blogs/${blogId}?noview=1`
+      const response = await fetch(url)
       if (response.ok) {
         const blogData = await response.json()
         setBlog(blogData)
 
         // Check if user liked the blog
         if (user) {
-          setIsLiked(blogData.likes.some((like: string) => like === user._id))
+          setIsLiked(blogData.likes.some((like: any) => like.toString() === user._id))
         }
 
         // Fetch comments with author info
@@ -133,10 +145,12 @@ export default function BlogDetailPage() {
         setIsLiked(data.liked)
         setBlog((prev) =>
           prev
-            ? {
+            ? ({
                 ...prev,
-                likes: data.liked ? [...prev.likes, user._id] : prev.likes.filter((id) => id !== user._id),
-              }
+                likes: data.liked
+                  ? [...prev.likes.map((id) => id.toString()), user._id]
+                  : prev.likes.filter((id) => id.toString() !== user._id),
+              } as BlogWithAuthor)
             : null,
         )
       }
