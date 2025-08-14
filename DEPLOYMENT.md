@@ -52,7 +52,7 @@ This guide covers deploying QuillTide to various platforms for production use.
    ```env
    NODE_ENV=production
    PORT=5000
-   MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/QuillTide
+   MONGODB_URI=MongoDB URI
    JWT_SECRET=your_production_jwt_secret_very_long_and_secure
    CLOUDINARY_CLOUD_NAME=your_cloud_name
    CLOUDINARY_API_KEY=your_api_key
@@ -186,7 +186,7 @@ This guide covers deploying QuillTide to various platforms for production use.
 
 3. **Connection string format:**
    ```
-   mongodb+srv://username:password@cluster.mongodb.net/QuillTide?retryWrites=true&w=majority
+   mongodb+srv://username:password@cluster.mongodb.net/querry
    ```
 
 ## 🔐 Security Considerations
