@@ -186,7 +186,7 @@ This guide covers deploying QuillTide to various platforms for production use.
 
 3. **Connection string format:**
    ```
-   mongodb+srv://username:password@cluster.mongodb.net/querry
+  can get your own
    ```
 
 ## 🔐 Security Considerations
